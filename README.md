@@ -1,12 +1,12 @@
 
 <p align="center"><img src="https://raw.githubusercontent.com/falcosecurity/community/master/logo/primary-logo.png" width="360"></p>
-<p align="center"><b>Terraform Module for Falco Cloudtrail Resources.</b></p>
+<p align="center"><b>Terraform Module for Falco AWS Resources.</b></p>
 
-# Terraform Module for Falco Cloudtrail Resources
+# Terraform Module for Falco AWS Resources
 
 ## Quick Start
 
-The [examples/single-account](./examples/single-account) directory can be used to create self-contained Cloudtrail + S3 + SNS + SQS resources that track cloud events and make them accessible to the [cloudtrail](https://github.com/falcosecurity/plugins/tree/master/plugins/cloudtrail) plugin:
+The [examples/single-account](./examples/single-account) directory can be used to create self-contained AWS Resources (Cloudtrail + S3 + SNS + SQS) that track cloud events and make them accessible to the [cloudtrail](https://github.com/falcosecurity/plugins/tree/master/plugins/cloudtrail) plugin:
 
 ```shell
 $ aws configure get region
