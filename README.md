@@ -3,6 +3,7 @@
 <p align="center"><b>Terraform Module for Falco AWS Resources.</b></p>
 
 # Terraform Module for Falco AWS Resources
+[![Falco Ecosystem Repository](https://github.com/falcosecurity/evolution/blob/main/repos/badges/falco-ecosystem-blue.svg)](https://github.com/falcosecurity/evolution/blob/main/REPOSITORIES.md#ecosystem-scope) [![Incubating](https://img.shields.io/badge/status-incubating-orange?style=for-the-badge)](https://github.com/falcosecurity/evolution/blob/main/REPOSITORIES.md#incubating)
 
 ## Quick Start
 
