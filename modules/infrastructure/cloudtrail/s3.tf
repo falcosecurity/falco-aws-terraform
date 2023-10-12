@@ -34,12 +34,13 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudtrail" {
   }
 }
 
-
-resource "aws_s3_bucket_acl" "cloudtrail" {
+resource "aws_s3_bucket_ownership_controls" "owner_enforced" {
   bucket = aws_s3_bucket.cloudtrail.id
-  acl    = "private"
-}
 
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
 
 # --------------------------
 # iam, acl
