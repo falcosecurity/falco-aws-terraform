@@ -34,6 +34,16 @@ resource "aws_cloudtrail" "cloudtrail" {
 
   tags = var.tags
 
+  event_selector {
+    read_write_type           = "All"
+    include_management_events = true
+
+    data_resource {
+      type   = "AWS::S3::Object"
+      values = ["arn:aws:s3"]
+    }
+  }
+
   ## note: seems required to avoid raicing conditions (InsufficientSnsTopicPolicyException on cloudtrail creation) /shrug
   depends_on = [aws_s3_bucket_policy.cloudtrail_s3, aws_sns_topic_policy.allow_cloudtrail_publish]
 }
