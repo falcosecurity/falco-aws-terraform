@@ -16,16 +16,15 @@
 # limitations under the License.
 #
 
-output "cloudtrail_sns_subscribed_sqs_url" {
-  value       = aws_sqs_queue.this.url
-  description = "URL of the cloudtrail-sns subscribed sqs"
+locals {
+  cloudtrail_deploy  = var.cloudtrail_sns_arn == "create"
+  cloudtrail_sns_arn = local.cloudtrail_deploy ? module.cloudtrail[0].sns_topic_arn : var.cloudtrail_sns_arn
 }
 
-output "cloudtrail_sns_subscribed_sqs_arn" {
-  value       = aws_sqs_queue.this.arn
-  description = "ARN of the cloudtrail-sns subscribed sqs"
+module "sqs_sns_subscription" {
+  source        = "../../modules/infrastructure/sqs-sns-subscription"
+  name          = var.name
+  sns_topic_arn = local.cloudtrail_sns_arn
+  tags          = var.tags
 }
-output "name" {
-  value       = aws_sqs_queue.this.name
-  description = "Name of the cloudtrail-sns subscribed sqs"
-}
+

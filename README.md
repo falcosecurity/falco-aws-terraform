@@ -41,8 +41,14 @@ plugins:
     open_params: "sqs://<QUEUE NAME>"
 ...
 load_plugins: [cloudtrail]
-```    
+```
 
 ## Documentation
 
 See `README.md` in [examples/single-account](./examples/single-account) or any of the `modules/*` subdirectories.
+
+## Advanced full EKS
+
+If you want to deploy the falco agent as part of an EKS cluster, configure the above [cloudtrail](https://github.com/falcosecurity/plugins/tree/main/plugins/cloudtrail) plugin + [k8saudit-eks](https://github.com/falcosecurity/plugins/tree/main/plugins/k8saudit-eks) and visualize the events with [Falcosidekick](https://github.com/falcosecurity/falcosidekick) check the [examples/single-account-full-eks](./examples/single-account-full-eks/README.md) module.
+
+!["Falcosidekick UI"](./examples/single-account-full-eks/imgs/falcosidekick.png)

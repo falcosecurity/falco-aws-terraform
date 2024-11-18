@@ -1,0 +1,26 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.96.2 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+        args:
+          - --args=--module
+          - --args=--enable-rule=terraform_documented_variables
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+          - --hook-config=--delegate-chdir
+      - id: terraform_docs
+        args:
+          - --args=--config=.terraform-docs.yaml
+          - --hook-config=--path-to-file=README.md        # Valid UNIX path. I.e. ../TFDOC.md or docs/README.md etc.
+          - --hook-config=--add-to-existing-file=true     # Boolean. true or false
+          - --hook-config=--create-file-if-not-exist=true # Boolean. true or false
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0
+    hooks:
+    - id: trailing-whitespace
+    - id: check-yaml
+      args:
+      - --allow-multiple-documents
+      - --unsafe
+    - id: no-commit-to-branch
