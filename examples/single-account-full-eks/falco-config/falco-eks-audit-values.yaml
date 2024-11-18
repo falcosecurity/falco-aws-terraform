@@ -1,0 +1,79 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright (C) 2023 The Falco Authors.
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tty: true
+kubernetes: false #disable the collection of k8s metadata
+
+falco:
+  rules_files:
+    - /etc/falco/k8s_audit_rules.yaml #rules to use
+    - /etc/falco/rules.d
+  plugins:
+    - name: k8saudit-eks
+      library_path: libk8saudit-eks.so
+      init_config:
+        region: ${aws_region}
+        shift: 10
+        polling_interval: 10
+        use_async: false
+        buffer_size: 500
+      open_params: ${cluster_name} #replace with your cluster name
+    - name: json
+      library_path: libjson.so
+      init_config: ""
+  load_plugins: [k8saudit-eks, json] #plugins to load
+  json_output: true
+  json_include_output_property: true
+  json_include_tags_property: true
+  http_output:
+    enabled: true
+    url: "http://falco-falcosidekick:2801/"
+
+driver:
+  enabled: false #disable the collection of syscalls
+collectors:
+  enabled: false #disable the collection of container metadata
+
+controller:
+  kind: deployment
+  deployment:
+    replicas: 1 #1 replica deployment to avoid duplication of alerts
+
+falcoctl: #use falcoctl to install automatically the plugin and the rules
+  indexes:
+  - name: falcosecurity
+    url: https://falcosecurity.github.io/falcoctl/index.yaml
+  artifact:
+    install:
+      enabled: true
+    follow:
+      enabled: true
+  config:
+    artifact:
+      allowedTypes:
+        - plugin
+        - rulesfile
+      install:
+        resolveDeps: false
+        refs: [k8saudit-rules:latest, k8saudit-eks:latest, json:latest]
+      follow:
+        refs: [k8saudit-rules:latest]
+
+serviceAccount:
+  create: false
+  name: "falco"

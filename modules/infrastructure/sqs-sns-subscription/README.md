@@ -1,6 +1,12 @@
 # Create an SQS and subscribe to SNS
 
 <!-- BEGIN_TF_DOCS -->
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.50.0 |
+
 ## Requirements
 
 | Name | Version |
@@ -8,15 +14,24 @@
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.15.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.50.0 |
 
-## Providers
+## Usage
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.50.0 |
+The basic usage of this module is as follows:
 
-## Modules
+```hcl
+module "example" {
+	 source  = "<module-path>"
 
-No modules.
+	 # Required variables
+	 name  =
+	 sns_topic_arn  =
+
+	 # Optional variables
+	 tags  = {
+  "product": "falcosecurity-for-cloud"
+}
+}
+```
 
 ## Resources
 
@@ -33,7 +48,11 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_name"></a> [name](#input\_name) | Queue name | `string` | n/a | yes |
 | <a name="input_sns_topic_arn"></a> [sns\_topic\_arn](#input\_sns\_topic\_arn) | CloudTrail SNS Topic ARN to subscribe the SQS queue | `string` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | falcosecurity-for-cloud tags | `map(string)` | <pre>{<br>  "product": "falcosecurity-for-cloud"<br>}</pre> | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | falcosecurity-for-cloud tags. always include 'product' default tag for resource-group proper functioning | `map(string)` | <pre>{<br>  "product": "falcosecurity-for-cloud"<br>}</pre> | no |
+
+## Modules
+
+No modules.
 
 ## Outputs
 
@@ -41,6 +60,7 @@ No modules.
 |------|-------------|
 | <a name="output_cloudtrail_sns_subscribed_sqs_arn"></a> [cloudtrail\_sns\_subscribed\_sqs\_arn](#output\_cloudtrail\_sns\_subscribed\_sqs\_arn) | ARN of the cloudtrail-sns subscribed sqs |
 | <a name="output_cloudtrail_sns_subscribed_sqs_url"></a> [cloudtrail\_sns\_subscribed\_sqs\_url](#output\_cloudtrail\_sns\_subscribed\_sqs\_url) | URL of the cloudtrail-sns subscribed sqs |
+| <a name="output_name"></a> [name](#output\_name) | Name of the cloudtrail-sns subscribed sqs |
 <!-- END_TF_DOCS -->
 
 ## Authors

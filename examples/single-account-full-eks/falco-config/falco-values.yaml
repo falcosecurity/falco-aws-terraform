@@ -1,0 +1,151 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright (C) 2023 The Falco Authors.
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tty: true
+# Enable the driver, and choose between the kernel module or the ebpf probe.
+# Default value: kernel module.
+driver:
+  enabled: true
+  kind: modern_ebpf
+  modernEbpf:
+    bufSizePreset: 4
+
+# Enable the collectors used to enrich the events with metadata.
+# Check the values.yaml file for fine-grained options.
+collectors:
+  enabled: true
+
+# We set the controller to daemonset since we have the syscalls source enabled.
+# It will ensure that every node on our cluster will be monitored by Falco.
+# Please note that the api-server will use the "k8saudit-webhook" service to send
+# audit logs to the falco instances. That means that when we have multiple instances of Falco
+# we can not predict to which instance the audit logs will be sent. When testing please check all
+# the Falco instance to make sure that at least one of them have received the audit logs.
+controller:
+  kind: daemonset
+
+falcoctl:
+  indexes:
+  - name: falcosecurity
+    url: https://falcosecurity.github.io/falcoctl/index.yaml
+  artifact:
+    install:
+      # -- Enable the init container.
+      enabled: true
+    follow:
+      # -- Enable the sidecar container. We do not support it yet for plugins. It is used only for rules feed such as k8saudit-rules rules.
+      enabled: true
+  config:
+    artifact:
+      install:
+        # -- Do not resolve the depenencies for artifacts. By default is true, but for our use case we disable it.
+        resolveDeps: true
+        # -- List of artifacts to be installed by the falcoctl init container.
+        refs: [falco-rules:latest, cloudtrail-rules:latest, falco-sandbox-rules:latest, github-rules:latest]
+      follow:
+        # -- List of artifacts to be followed by the falcoctl sidecar container.
+        refs: [falco-rules:latest, cloudtrail-rules:latest, falco-sandbox-rules:latest, github-rules:latest]
+
+services:
+  # - name: k8saudit-webhook
+  #   type: NodePort
+  #   ports:
+  #     - port: 9765 # See plugin open_params
+  #       nodePort: 30007
+  #       protocol: TCP
+  # - name: github-webhook
+  #   type: NodePort
+  #   ports:
+  #     - port: 80 # See plugin open_params
+  #       nodePort: 30009
+  #       protocol: TCP
+
+falco:
+  rules_files:
+    - /etc/falco/falco_rules.yaml
+    - /etc/falco/aws_cloudtrail_rules.yaml
+    - /etc/falco/falco_sandbox_rules.yaml
+    - /etc/falco/rules.d
+  plugins:
+    - name: json
+      library_path: libjson.so
+      init_config: ""
+    - name: cloudtrail
+      library_path: libcloudtrail.so
+      init_config: '{"sqsDelete": true}'
+      open_params: "sqs://${sqs_name}"
+  load_plugins: [cloudtrail, json]
+  json_output: true
+  json_include_output_property: true
+  json_include_tags_property: true
+  http_output:
+    enabled: true
+    url: "http://falco-falcosidekick:2801/"
+
+  metrics:
+    enabled: true
+    interval: 15m
+    output_rule: true
+    # output_file: /tmp/falco_stats.jsonl
+    resource_utilization_enabled: true
+    state_counters_enabled: true
+    kernel_event_counters_enabled: true
+    libbpf_stats_enabled: true
+    convert_memory_to_mb: true
+    include_empty_values: false
+
+# -- Parameters used
+healthChecks:
+  livenessProbe:
+    # -- Tells the kubelet that it should wait X seconds before performing the first probe.
+    initialDelaySeconds: 30
+    # -- Number of seconds after which the probe times out.
+    timeoutSeconds: 10
+    # -- Specifies that the kubelet should perform the check every x seconds.
+    periodSeconds: 20
+  readinessProbe:
+    # -- Tells the kubelet that it should wait X seconds before performing the first probe.
+    initialDelaySeconds: 30
+    # -- Number of seconds after which the probe times out.
+    timeoutSeconds: 10
+    # -- Specifies that the kubelet should perform the check every x seconds.
+    periodSeconds: 20
+
+falcosidekick:
+  enabled: true
+  webui:
+    enabled: true
+    replicaCount: 1
+    # service:
+    #   # -- The web UI service type
+    #   type: NodePort
+    #   nodePort: 30282
+  replicaCount: 1
+
+# Commented out since merged with terraform in the init provisioning
+extra:
+  env:
+    - name: AWS_DEFAULT_REGION
+      value: ${aws_region}
+
+serviceAccount:
+  # -- Specifies whether a service account should be created.
+  create: true
+  # -- Annotations to add to the service account.
+  annotations:
+    eks.amazonaws.com/role-arn: ${irsa_role_arn}
