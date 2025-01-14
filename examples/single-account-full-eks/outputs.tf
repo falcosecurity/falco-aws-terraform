@@ -25,3 +25,13 @@ output "cloudtrail_sns_subscribed_sqs_arn" {
   value       = module.sqs_sns_subscription.cloudtrail_sns_subscribed_sqs_arn
   description = "ARN of the cloudtrail-sns subscribed sqs"
 }
+
+output "kubeconfig" {
+  value       = "aws eks update-kubeconfig --name ${module.eks_cluster.cluster_name} --region ${var.aws_region}"
+  description = "Commands to get the kubeconfig"
+}
+
+output "get_falcosidekick_local" {
+  value       = "kubectl -n falco port-forward svc/falco-falcosidekick-ui 30282:$(kubectl get svc falco-falcosidekick-ui -n falco -o jsonpath='{.spec.ports[0].port}')"
+  description = "Command to get the falcosidekick UI via port-forward"
+}

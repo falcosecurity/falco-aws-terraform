@@ -53,6 +53,8 @@ $ terraform apply
 
 ## Result
 
+> Check the following Terraform outputs: `kubeconfig` and `get_falcosidekick_local` so you can get the kubeconfig in your local env and then to port-forward the falcosidekick-ui and navigate to <http://localhost:30282> to check the events
+
 Once the EKS cluster is up and running you can run the following kubectl commands to confirm all looks good.
 
 ```bash
@@ -179,6 +181,8 @@ module "example" {
 |------|-------------|
 | <a name="output_cloudtrail_sns_subscribed_sqs_arn"></a> [cloudtrail\_sns\_subscribed\_sqs\_arn](#output\_cloudtrail\_sns\_subscribed\_sqs\_arn) | ARN of the cloudtrail-sns subscribed sqs |
 | <a name="output_cloudtrail_sns_subscribed_sqs_url"></a> [cloudtrail\_sns\_subscribed\_sqs\_url](#output\_cloudtrail\_sns\_subscribed\_sqs\_url) | URL of the cloudtrail-sns subscribed sqs |
+| <a name="output_get_falcosidekick_local"></a> [get\_falcosidekick\_local](#output\_get\_falcosidekick\_local) | Command to get the falcosidekick UI via port-forward |
+| <a name="output_kubeconfig"></a> [kubeconfig](#output\_kubeconfig) | Commands to get the kubeconfig |
 <!-- END_TF_DOCS -->
 
 ## Authors
