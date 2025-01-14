@@ -21,7 +21,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.76.0"
+      version = ">= 5.0.0"
     }
     cloudinit = {
       source  = "hashicorp/cloudinit"
@@ -29,7 +29,7 @@ terraform {
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.16"
+      version = "~> 2.16.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"

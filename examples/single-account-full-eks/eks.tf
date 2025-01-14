@@ -40,7 +40,7 @@ module "eks_cluster" {
   subnets = module.vpc.private_subnets_ids # Change this value to your private list of subnets ids if you are using an existing VPC
   # cluster_endpoint_public_access_cidrs = ["YOUR_CIDR_BLOCKs"] # Set to the list of CIDR blocks that you want to allow access to the EKS cluster
   # cluster_endpoint_public_access = true # Set to false if you want to restrict the access to the EKS cluster
-  node_count    = 2
+  node_count    = 1
   instance_type = "t2.xlarge"
   # By default, the EKS cluster will create an access entry for the user/role that is used to create the cluster.
   # acces_entries = [
